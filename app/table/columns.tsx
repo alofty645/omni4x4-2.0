@@ -43,7 +43,7 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: "price",
-    header: "Product Price",
+    header: "Current Product Price",
     cell: ({ row }) => {
       const priceArray = row.original.price; // Assuming price is an array of objects within the row data
 
@@ -69,7 +69,7 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: "price",
-    header: "Shipping Price",
+    header: "Current Shipping Price",
     cell: ({ row }) => {
       const priceArray = row.original.price; // Assuming price is an array of objects within the row data
 
@@ -96,7 +96,7 @@ export const columns: ColumnDef<Product>[] = [
 
   {
     accessorKey: "total_price", // Add a new accessor key
-    header: "Total Price",
+    header: "Current Total Price",
     cell: ({ row }) => {
       const priceArray = row.original.price; // Assuming price is an array of objects within the row data
 
@@ -157,7 +157,9 @@ export const columns: ColumnDef<Product>[] = [
       }).format(lowestTotalPrice);
 
       // Format the created_at date to display only the date part
-      const formattedCreatedAt = new Date(lowestCreatedAt).toLocaleDateString();
+      const formattedCreatedAt = new Date(lowestCreatedAt).toLocaleDateString(
+        "en-AU"
+      );
 
       return (
         <div className="text-center">
