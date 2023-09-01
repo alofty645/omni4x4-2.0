@@ -53,10 +53,6 @@ export const columns: ColumnDef<Product>[] = [
         </Button>
       );
     },
-  },
-  {
-    accessorKey: "shipping_price",
-    header: () => <div className="text-right">Shipping Price</div>,
     cell: ({ row }) => {
       const shipping_price = parseFloat(row.getValue("shipping_price"));
       const formatted = new Intl.NumberFormat("en-US", {
@@ -64,13 +60,41 @@ export const columns: ColumnDef<Product>[] = [
         currency: "AUD",
       }).format(shipping_price);
 
-      return <div className="text-right font-medium">{formatted}</div>;
+      return <div className="text-centre font-medium">{formatted}</div>;
+    },
+  },
+  {
+    accessorKey: "shipping_price",
+    header: () => <div className="text-centre">Shipping Price</div>,
+    cell: ({ row }) => {
+      const shipping_price = parseFloat(row.getValue("shipping_price"));
+      const formatted = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "AUD",
+      }).format(shipping_price);
+
+      return <div className="text-centre font-medium">{formatted}</div>;
     },
   },
 
   {
     accessorKey: "",
     header: "Total Price",
+    cell: ({ row }) => {
+      const product_price = parseFloat(row.getValue("product_price"));
+      const shipping_price = parseFloat(row.getValue("shipping_price"));
+
+      const totalPrice = product_price + shipping_price;
+
+      const formattedTotalPrice = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "AUD",
+      }).format(totalPrice);
+
+      return (
+        <div className="text-centre font-medium">{formattedTotalPrice}</div>
+      );
+    },
   },
 
   {
