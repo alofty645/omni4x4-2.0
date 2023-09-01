@@ -1,27 +1,44 @@
-"use client";
-
+import { Product, columns } from "./table/columns";
+import { DataTable } from "./table/data-table";
 import supabase from "@/supabase/createclient";
-import { useState, useEffect } from "react";
 
-export default function Home() {
-  const [products, setProducts] = useState([]);
+async function getData(): Promise<Product[]> {
+  try {
+    let { data: products, error } = await supabase.from("product").select("*");
 
-  async function getProducts() {
-    let { data: product }: any = await supabase.from("product").select("*");
-    setProducts(product);
-    console.log(product);
+    if (error) {
+      throw error;
+    }
+
+    if (products) {
+      return products;
+    }
+
+    // Return an empty array if no products are found
+    return [];
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    // Handle the error as needed
+    throw error;
   }
+}
 
-  useEffect(() => {
-    getProducts();
-  }, []);
+(async () => {
+  try {
+    const products = await getData();
+    console.log(products);
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
+})();
+
+export default async function DemoPage() {
+  const data = await getData();
 
   return (
-    <div className="m-4  h-3/4 rounded-3xl">
-      <div className="m-10 text-center">
-        <h1 className="text-5xl m-3">Omni4x4</h1>
-        <div></div>
-      </div>
+    <div className="container mx-auto py-10">
+      <h1 className="text-center">Omni4x4</h1>
+      <DataTable columns={columns} data={data} />
     </div>
   );
 }

@@ -16,49 +16,72 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export type Payment = {
+export type Product = {
   id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
+  product_price: number;
+  product_name: string;
+  product_link: string;
+  created_at: string;
+  shipping_price: number;
 };
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Product>[] = [
   {
-    accessorKey: "status",
-    header: "Status",
-  },
-  {
-    accessorKey: "email",
+    accessorKey: "product_name",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Email
+          Product Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
   },
   {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
+    accessorKey: "product_price",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Current Price
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+  },
+  {
+    accessorKey: "shipping_price",
+    header: () => <div className="text-right">Shipping Price</div>,
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
+      const shipping_price = parseFloat(row.getValue("shipping_price"));
       const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "AUD",
-      }).format(amount);
+      }).format(shipping_price);
 
       return <div className="text-right font-medium">{formatted}</div>;
     },
   },
+
+  {
+    accessorKey: "",
+    header: "Total Price",
+  },
+
+  {
+    accessorKey: "",
+    header: "Lowest Seen Total Price",
+  },
+
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original;
+      const product = row.original;
 
       return (
         <DropdownMenu>
@@ -71,13 +94,13 @@ export const columns: ColumnDef<Payment>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() => navigator.clipboard.writeText(product.id)}
             >
-              Copy payment ID
+              Copy product ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>View product details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
