@@ -1,10 +1,13 @@
+import { log } from "console";
 import { Product, columns } from "./table/columns";
 import { DataTable } from "./table/data-table";
 import supabase from "@/supabase/createclient";
 
 async function getData(): Promise<Product[]> {
   try {
-    let { data: products, error } = await supabase.from("product").select("*");
+    let { data: products, error } = await supabase
+      .from("product")
+      .select("*, price(*)");
 
     if (error) {
       throw error;

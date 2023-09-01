@@ -23,83 +23,148 @@ export type Product = {
   product_link: string;
   created_at: string;
   shipping_price: number;
+  price: object[];
 };
 
 export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "product_name",
-    header: ({ column }) => {
+    header: "Product Name",
+    cell: ({ row }) => {
+      const productLink = row.original.product_link;
+
+      // Create a link to the product using the product_link data
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Product Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <a href={productLink} target="_blank" rel="noopener noreferrer">
+          {row.original.product_name}
+        </a>
       );
     },
   },
   {
-    accessorKey: "product_price",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Current Price
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    accessorKey: "price",
+    header: "Product Price",
     cell: ({ row }) => {
-      const shipping_price = parseFloat(row.getValue("shipping_price"));
-      const formatted = new Intl.NumberFormat("en-US", {
+      const priceArray = row.original.price; // Assuming price is an array of objects within the row data
+
+      // Initialize with an empty string
+      let latestProductPrice = "";
+
+      priceArray.forEach((priceObj) => {
+        const productPrice = parseFloat(priceObj.product_price);
+
+        if (!isNaN(productPrice)) {
+          latestProductPrice = productPrice;
+        }
+      });
+
+      // Format the latest product price to AUD
+      const formattedLatestProductPrice = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "AUD",
-      }).format(shipping_price);
+      }).format(latestProductPrice);
 
-      return <div className="text-centre font-medium">{formatted}</div>;
+      return <div className="text-center">{formattedLatestProductPrice}</div>;
     },
   },
   {
-    accessorKey: "shipping_price",
-    header: () => <div className="text-centre">Shipping Price</div>,
+    accessorKey: "price",
+    header: "Shipping Price",
     cell: ({ row }) => {
-      const shipping_price = parseFloat(row.getValue("shipping_price"));
-      const formatted = new Intl.NumberFormat("en-US", {
+      const priceArray = row.original.price; // Assuming price is an array of objects within the row data
+
+      // Initialize with an empty string
+      let latestShippingPrice = "";
+
+      priceArray.forEach((priceObj) => {
+        const shippingPrice = parseFloat(priceObj.shipping_price);
+
+        if (!isNaN(shippingPrice)) {
+          latestShippingPrice = shippingPrice;
+        }
+      });
+
+      // Format the latest shipping price to AUD
+      const formattedLatestShippingPrice = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "AUD",
-      }).format(shipping_price);
+      }).format(latestShippingPrice);
 
-      return <div className="text-centre font-medium">{formatted}</div>;
+      return <div className="text-center">{formattedLatestShippingPrice}</div>;
     },
   },
 
   {
-    accessorKey: "",
+    accessorKey: "total_price", // Add a new accessor key
     header: "Total Price",
     cell: ({ row }) => {
-      const product_price = parseFloat(row.getValue("product_price"));
-      const shipping_price = parseFloat(row.getValue("shipping_price"));
+      const priceArray = row.original.price; // Assuming price is an array of objects within the row data
 
-      const totalPrice = product_price + shipping_price;
+      // Initialize with the latest values
+      let latestProductPrice = 0;
+      let latestShippingPrice = 0;
 
+      priceArray.forEach((priceObj) => {
+        const productPrice = parseFloat(priceObj.product_price);
+        const shippingPrice = parseFloat(priceObj.shipping_price);
+
+        if (!isNaN(productPrice)) {
+          latestProductPrice = productPrice;
+        }
+
+        if (!isNaN(shippingPrice)) {
+          latestShippingPrice = shippingPrice;
+        }
+      });
+
+      const totalPrice = latestProductPrice + latestShippingPrice;
+
+      // Format the total price to AUD
       const formattedTotalPrice = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "AUD",
       }).format(totalPrice);
 
-      return (
-        <div className="text-centre font-medium">{formattedTotalPrice}</div>
-      );
+      return <div className="text-center">{formattedTotalPrice}</div>;
     },
   },
 
   {
-    accessorKey: "",
-    header: "Lowest Seen Total Price",
+    accessorKey: "price",
+    header: "Lowest Seen Price - Date",
+    cell: ({ row }) => {
+      const priceArray = row.original.price; // Assuming price is an array of objects within the row data
+
+      // Find the object with the lowest total price
+      let lowestTotalPrice = Infinity; // Initialize with a high value
+      let lowestCreatedAt = ""; // Initialize with an empty string
+
+      priceArray.forEach((priceObj) => {
+        const productPrice = parseFloat(priceObj.product_price);
+        const shippingPrice = parseFloat(priceObj.shipping_price);
+        const totalPrice = productPrice + shippingPrice;
+
+        if (!isNaN(totalPrice) && totalPrice < lowestTotalPrice) {
+          lowestTotalPrice = totalPrice;
+          lowestCreatedAt = priceObj.created_at;
+        }
+      });
+
+      // Format the lowest price to AUD
+      const formattedLowestPrice = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "AUD",
+      }).format(lowestTotalPrice);
+
+      // Format the created_at date to display only the date part
+      const formattedCreatedAt = new Date(lowestCreatedAt).toLocaleDateString();
+
+      return (
+        <div className="text-center">
+          {formattedLowestPrice} - {formattedCreatedAt}
+        </div>
+      );
+    },
   },
 
   {
