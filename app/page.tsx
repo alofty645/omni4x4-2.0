@@ -1,6 +1,7 @@
 import { Product, columns } from "./table/columns";
 import { DataTable } from "./table/data-table";
 import supabase from "@/supabase/createclient";
+import { ModeToggle } from "@/components/ui/toggle";
 
 async function getData(): Promise<Product[]> {
   try {
@@ -38,6 +39,7 @@ export default async function DemoPage() {
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-center">Omni4x4</h1>
+
       <DataTable columns={columns} data={data} />
     </div>
   );

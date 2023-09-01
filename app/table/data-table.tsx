@@ -1,6 +1,7 @@
 "use client";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
+import { ModeToggle } from "@/components/ui/toggle";
 
 import {
   ColumnDef,
@@ -80,6 +81,7 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -106,6 +108,7 @@ export function DataTable<TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
+        <ModeToggle></ModeToggle>
       </div>
       <div className="rounded-md border">
         <Table>
