@@ -1,7 +1,6 @@
 import { Product, columns } from "./table/columns";
 import { DataTable } from "./table/data-table";
 import supabase from "@/supabase/createclient";
-import { ModeToggle } from "@/components/ui/toggle";
 
 async function getData(): Promise<Product[]> {
   try {

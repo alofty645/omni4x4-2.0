@@ -2,6 +2,7 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/ui/toggle";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import {
   ColumnDef,
@@ -81,6 +82,14 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
+        <div className="items-top flex space-x-2 m-4">
+          <Checkbox />
+          <div className="grid gap-1.5 leading-none">
+            <label className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              Show products currently at lowest seen price
+            </label>
+          </div>
+        </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
