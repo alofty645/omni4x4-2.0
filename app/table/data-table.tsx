@@ -2,7 +2,8 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/ui/toggle";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 import {
   ColumnDef,
@@ -82,12 +83,12 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        <div className="items-top flex space-x-2 m-4">
-          <Checkbox />
-          <div className="grid gap-1.5 leading-none">
-            <label className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-              Show products currently at lowest seen price
-            </label>
+        <div>
+          <div className="flex items-center m-4 space-x-2">
+            <Switch id="filter" />
+            <Label htmlFor="filter">
+              Only show products at lowest seen price
+            </Label>
           </div>
         </div>
 

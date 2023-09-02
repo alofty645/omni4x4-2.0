@@ -44,8 +44,7 @@ export default async function DemoPage() {
         Omni4x4
       </h1>
       <p className="leading-7 [&:not(:first-child)]:mt-6">
-        4WD Supacentre have different sales everyday. This tool is to figure out
-        if the current deals are good deals.
+        Track the daily deals of 4WD Supacentre
       </p>
       {/* <div className="flex justify-end">
         <Navmenu></Navmenu>
