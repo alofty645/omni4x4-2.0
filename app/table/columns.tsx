@@ -18,7 +18,7 @@ import {
 
 export type Product = {
   id: string;
-  product_price: number;
+  product_price: any;
   product_name: string;
   product_link: string;
   created_at: string;
@@ -48,7 +48,7 @@ export const columns: ColumnDef<Product>[] = [
       const priceArray = row.original.price; // Assuming price is an array of objects within the row data
 
       // Initialize with an empty string
-      let latestProductPrice = "";
+      let latestProductPrice: any = "";
 
       priceArray.forEach((priceObj) => {
         const productPrice = parseFloat(priceObj.product_price);
@@ -74,7 +74,7 @@ export const columns: ColumnDef<Product>[] = [
       const priceArray = row.original.price; // Assuming price is an array of objects within the row data
 
       // Initialize with an empty string
-      let latestShippingPrice = "";
+      let latestShippingPrice: any = "";
 
       priceArray.forEach((priceObj) => {
         const shippingPrice = parseFloat(priceObj.shipping_price);

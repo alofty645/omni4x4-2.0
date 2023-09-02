@@ -87,7 +87,7 @@ export function DataTable<TData, TValue>({
           <div className="flex items-center m-4 space-x-2">
             <Switch id="filter" />
             <Label htmlFor="filter">
-              Only show products at lowest seen price
+              Only show products currently at lowest seen price
             </Label>
           </div>
         </div>
