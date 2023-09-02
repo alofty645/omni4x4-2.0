@@ -39,7 +39,7 @@ export const columns: ColumnDef<Product>[] = [
 
       // Create a link to the product using the product_link data
       return (
-        <a href={productLink} target="_blank" rel="noopener noreferrer">
+        <a className="text-left" href={productLink} target="_blank" rel="blank">
           {row.original.product_name}
         </a>
       );
@@ -68,7 +68,7 @@ export const columns: ColumnDef<Product>[] = [
         currency: "AUD",
       }).format(latestProductPrice);
 
-      return <div className="text-center">{formattedLatestProductPrice}</div>;
+      return <div className="text-left">{formattedLatestProductPrice}</div>;
     },
   },
   {
@@ -94,7 +94,7 @@ export const columns: ColumnDef<Product>[] = [
         currency: "AUD",
       }).format(latestShippingPrice);
 
-      return <div className="text-center">{formattedLatestShippingPrice}</div>;
+      return <div className="text-left">{formattedLatestShippingPrice}</div>;
     },
   },
 
@@ -129,7 +129,7 @@ export const columns: ColumnDef<Product>[] = [
         currency: "AUD",
       }).format(totalPrice);
 
-      return <div className="text-center">{formattedTotalPrice}</div>;
+      return <div className="text-left">{formattedTotalPrice}</div>;
     },
   },
 
@@ -166,40 +166,40 @@ export const columns: ColumnDef<Product>[] = [
       );
 
       return (
-        <div className="text-center">
+        <div className="text-left">
           {formattedLowestPrice} - {formattedCreatedAt}
         </div>
       );
     },
   },
 
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      const product = row.original;
+  // {
+  //   id: "actions",
+  //   cell: ({ row }) => {
+  //     const product = row.original;
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(product.id)}
-            >
-              Copy product ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View product details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
+  //     return (
+  //       <DropdownMenu>
+  //         <DropdownMenuTrigger asChild>
+  //           <Button variant="ghost" className="h-8 w-8 p-0">
+  //             <span className="sr-only">Open menu</span>
+  //             <MoreHorizontal className="h-4 w-4" />
+  //           </Button>
+  //         </DropdownMenuTrigger>
+  //         <DropdownMenuContent align="end">
+  //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
+  //           <DropdownMenuItem
+  //             onClick={() => navigator.clipboard.writeText(product.id)}
+  //           >
+  //             Copy product ID
+  //           </DropdownMenuItem>
+  //           <DropdownMenuSeparator />
+  //           <DropdownMenuItem>View customer</DropdownMenuItem>
+  //           <DropdownMenuItem>View product details</DropdownMenuItem>
+  //         </DropdownMenuContent>
+  //       </DropdownMenu>
+  //     );
+  //   },
+  // },
   // ...
 ];
