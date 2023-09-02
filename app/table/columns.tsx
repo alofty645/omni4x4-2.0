@@ -16,14 +16,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+type PriceItem = {
+  product_price: string;
+  shipping_price: string;
+  created_at: string;
+};
+
 export type Product = {
   id: string;
-  product_price: any;
   product_name: string;
   product_link: string;
   created_at: string;
-  shipping_price: number;
-  price: object[];
+  price: PriceItem[]; // Specify the type for price array
 };
 
 export const columns: ColumnDef<Product>[] = [
