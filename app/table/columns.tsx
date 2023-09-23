@@ -33,7 +33,17 @@ export type Product = {
 export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "product_name",
-    header: "Product Name",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Product name
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const productLink = row.original.product_link;
 
