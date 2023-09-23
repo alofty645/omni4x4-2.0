@@ -8,39 +8,27 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from supabase import create_client, Client
 
-
 # create Supabase client
-
 url = "https://oekeyzwvxekuznfupkka.supabase.co"
 key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9la2V5end2eGVrdXpuZnVwa2thIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODI1OTAxMjgsImV4cCI6MTk5ODE2NjEyOH0.JYFSf-xymsOm0FlbN4XtFieFY9hD5PzCgYcbIJ6NogU"
 supabase: Client = create_client(url, key)
 
-
 # Setting up the driver
-chromeOptions = Options()  # Setting up the chrome options
-chromeOptions.add_experimental_option(
-    "excludeSwitches", ["enable-logging"]
-)  # Disabling the logging
-chromeOptions.add_argument("--headless")  # Running the driver in headless mode
-chromePath = "chromedriver.exe"  # Path to the chrome driver
-driver = webdriver.Chrome(options=chromeOptions)  # Setting up the driver
-driver.maximize_window()  # Maximizing the window
+chromeOptions = Options()
+chromeOptions.add_experimental_option("excludeSwitches", ["enable-logging"])
+chromeOptions.add_argument("--headless")
+chromePath = "chromedriver.exe"
+driver = webdriver.Chrome(options=chromeOptions)
+driver.maximize_window()
 
-# executable_path = chromePath,
-
-
-driver.get(
-    "https://www.4wdsupacentre.com.au/products.html?page=1"
-)  # Opening the website
-WebDriverWait(driver, 10).until(
+# Get the total number of pages
+driver.get("https://www.4wdsupacentre.com.au/products.html?page=1&pageSize=36")
+WebDriverWait(driver, 30).until(
     EC.presence_of_element_located(
         (By.XPATH, '//div[@class="itemCountContainerB-3Hm itemCountContainerBTop-3Nx"]')
     )
 )
-response = Selector(
-    text=driver.page_source
-)  # Converting the page source to a response object
-
+response = Selector(text=driver.page_source)
 products = response.xpath(
     '//div[@class="itemCountContainerB-3Hm itemCountContainerBTop-3Nx"]/text()'
 ).extract_first()
@@ -48,101 +36,98 @@ products = products.strip()
 products = products.split(" ")
 products = products[-1]
 products = int(products)
-total_pages = products / 12
+total_pages = products // 36
 
-if total_pages > int(total_pages):
-    total_pages = int(total_pages) + 2
-else:
-    total_pages = int(total_pages) + 1
-    # print("Total Pages: ", total_pages)
+if products % 36 != 0:
+    total_pages += 1
 
-    for i in range(1, int(total_pages)):  # Looping through all the pages
-        link = "https://www.4wdsupacentre.com.au/products.html?page=" + str(
-            i
-        )  # Creating the link
-        driver.get(link)
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '//div[@class="root-2fi null"]'))
+
+# Initialize data lists to store scraped data
+product_data_buffer = []
+price_data_buffer = []
+PAGE_BUFFER_SIZE = 500  # Set the buffer size
+
+for i in range(1, total_pages + 1):
+    link = f"https://www.4wdsupacentre.com.au/products.html?page={i}&pageSize=36"
+    driver.get(link)
+    WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located((By.XPATH, '//div[@class="root-2fi null"]'))
+    )
+    response = Selector(text=driver.page_source)
+
+    listings = response.xpath('//div[@class="root-2fi null"]')
+
+    for listing in listings:
+        # Scraping data
+        product_name = listing.xpath(
+            './/div[@class="name-1QF"]/a/text()'
+        ).extract_first()
+        product_link = (
+            "https://www.4wdsupacentre.com.au"
+            + listing.xpath('.//div[@class="name-1QF"]/a/@href').extract_first()
         )
-        response = Selector(
-            text=driver.page_source
-        )  # Converting the page source to a response object
+        product_price = listing.xpath(
+            './/div[@class="priceLine-1H-"]/div/span/text()'
+        ).extract()
+        shipping_price = listing.xpath(
+            './/span[@class="freightvalue-2VW"]/span/text()'
+        ).extract()
 
-        listings = response.xpath(
-            '//div[@class="root-2fi null"]'
-        )  # Scraping all the listings on the page
-        for listing in listings:
-            product_link = listing.xpath(
-                './/div[@class="name-1QF"]/a/@href'
-            ).extract_first()
+        if product_price:
+            product_price = (
+                "".join(product_price).strip().replace("$", "").replace(",", "")
+            )
+            product_price = float(product_price)
+        else:
+            product_price = 0.0
 
-            product_name = listing.xpath(
-                './/div[@class="name-1QF"]/a/text()'
-            ).extract_first()  # Scraping product name
-            if product_name:
-                product_name = product_name.strip()
+        if shipping_price:
+            shipping_price = "".join(shipping_price)
+            shipping_price = shipping_price.strip()
+            shipping_price = shipping_price.replace("+ ", "")
+            shipping_price = float(shipping_price.replace("$", "").replace(",", ""))
+        else:
+            shipping_price = 0
 
-            product_price = listing.xpath(
-                './/div[@class="priceLine-1H-"]/div/span/text()'
-            ).extract()
-            if product_price:
-                product_price = "".join(product_price)
-                product_price = product_price.strip()
-                product_price = float(product_price.replace("$", "").replace(",", ""))
+        # Append data to buffers
+        product_data_buffer.append(
+            {"product_name": product_name, "product_link": product_link}
+        )
+        price_data_buffer.append(
+            {
+                "product_price": product_price,
+                "shipping_price": shipping_price,
+                "product_link": product_link,
+            }
+        )
+        # print("-------------------------------------------------------------------")
+        # print("Page Number: ", i)
+        # print("Product Link: ", product_link)
+        # print("Product Name: ", product_name)
+        # print("Product Price: ", product_price)
+        # print("Shipping Price: ", shipping_price)
+        # print("-------------------------------------------------------------------")
 
-            shipping_price = listing.xpath(
-                './/span[@class="freightvalue-2VW"]/span/text()'
-            ).extract()
-            if shipping_price:
-                shipping_price = "".join(shipping_price)
-                shipping_price = shipping_price.strip()
-                shipping_price = shipping_price.replace("+ ", "")
-                shipping_price = float(shipping_price.replace("$", "").replace(",", ""))
-            else:
-                shipping_price = ""
+        # Check if it's time to perform bulk writes
+        if len(product_data_buffer) >= PAGE_BUFFER_SIZE:
+            # Perform bulk API writes
+            product_insert = (
+                supabase.table("product").upsert(product_data_buffer).execute()
+            )
+            price_insert = supabase.table("price").insert(price_data_buffer).execute()
 
-            product_link = (
-                "https://www.4wdsupacentre.com.au" + product_link
-            )  # Creating the product link
-            driver.get(product_link)
+            # Clear the buffers
+            product_data_buffer = []
+            price_data_buffer = []
 
-            try:
-                print(
-                    "-------------------------------------------------------------------"
-                )
-                print("Page Number: ", i)
-                print("Product Link: ", product_link)
-                print("Product Name: ", product_name)
-                print("Product Price: ", product_price)
-                print("Shipping Price: ", shipping_price)
+# Perform any remaining bulk writes
+if product_data_buffer:
+    product_insert = supabase.table("product").upsert(product_data_buffer).execute()
+if price_data_buffer:
+    price_insert = supabase.table("price").insert(price_data_buffer).execute()
 
-                print(
-                    "-------------------------------------------------------------------"
-                )
-
-                product = (
-                    supabase.table("product")
-                    .upsert(
-                        {"product_name": product_name, "product_link": product_link}
-                    )
-                    .execute()
-                )
-
-                price = (
-                    supabase.table("price")
-                    .insert(
-                        {
-                            "product_price": product_price,
-                            "shipping_price": shipping_price,
-                            "product_link": product_link,
-                        }
-                    )
-                    .execute()
-                )
-            except:
-                pass
-        print("> Pages Scraped:", i)
+# Close the driver
+driver.close()
+driver.quit()
 
 print("The Scraping has finished successfully!")
-driver.close()  # Closing the driver
-driver.quit()  # Quitting the driver
