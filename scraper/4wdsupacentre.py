@@ -98,7 +98,6 @@ else:
                 shipping_price = shipping_price.strip()
                 shipping_price = shipping_price.replace("+ ", "")
                 shipping_price = float(shipping_price.replace("$", "").replace(",", ""))
-
             else:
                 shipping_price = ""
 
