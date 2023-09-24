@@ -72,26 +72,26 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex items-center space-x-2 py-4">
         <Input
           placeholder="Enter Product"
           value={
-            (table.getColumn("product_name")?.getFilterValue() as string) ?? ""
+            (table.getColumn("Product Name")?.getFilterValue() as string) ?? ""
           }
           onChange={(event) =>
-            table.getColumn("product_name")?.setFilterValue(event.target.value)
+            table.getColumn("Product Name")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-sm "
         />
         {/* <div>
           <div className="flex items-center m-4 space-x-2">
-            <Switch id="filter" />
+            <Switch id="filter" onCheckedChange={() => console.log("Hello")} />
             <Label htmlFor="filter">
               Only show products currently at lowest seen price
             </Label>
           </div>
         </div> */}
-
+        <div className="flex-1 text-sm text-muted-foreground"></div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -118,6 +118,7 @@ export function DataTable<TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
+
         <ModeToggle></ModeToggle>
       </div>
       <div className="rounded-md border">
@@ -170,7 +171,12 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
+
       <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="flex-1 text-sm text-muted-foreground">
+          {table.getFilteredRowModel().rows.length} Products
+        </div>
+
         <Button
           variant="outline"
           size="sm"

@@ -33,30 +33,27 @@ export type Product = {
 export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "product_name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Product name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    id: "Product Name",
+    header: "Product Name",
     cell: ({ row }) => {
       const productLink = row.original.product_link;
 
       // Create a link to the product using the product_link data
       return (
-        <a className="text-left" href={productLink} target="_blank" rel="blank">
+        <a
+          className="text-right w-2"
+          href={productLink}
+          target="_blank"
+          rel="blank"
+        >
           {row.original.product_name}
         </a>
       );
     },
   },
   {
-    accessorKey: "price",
+    accessorKey: "product_price",
+    id: " Current Product Price",
     header: "Current Product Price",
     cell: ({ row }) => {
       const priceArray = row.original.price; // Assuming price is an array of objects within the row data
@@ -82,7 +79,8 @@ export const columns: ColumnDef<Product>[] = [
     },
   },
   {
-    accessorKey: "price",
+    accessorKey: "shipping_price",
+    id: "Current Shipping Price",
     header: "Current Shipping Price",
     cell: ({ row }) => {
       const priceArray = row.original.price; // Assuming price is an array of objects within the row data
@@ -111,6 +109,7 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "total_price", // Add a new accessor key
     header: "Current Total Price",
+    id: "Current Total Price",
     cell: ({ row }) => {
       const priceArray = row.original.price; // Assuming price is an array of objects within the row data
 
@@ -144,7 +143,8 @@ export const columns: ColumnDef<Product>[] = [
   },
 
   {
-    accessorKey: "price",
+    accessorKey: "lowest_seen_price",
+    id: "Lowest Seen Price - Date",
     header: "Lowest Seen Price - Date",
     cell: ({ row }) => {
       const priceArray = row.original.price; // Assuming price is an array of objects within the row data
