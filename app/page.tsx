@@ -29,7 +29,6 @@ async function getData(): Promise<Product[]> {
 (async () => {
   try {
     const products = await getData();
-    console.log(products);
   } catch (error) {
     console.error("An error occurred:", error);
   }
